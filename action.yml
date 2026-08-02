@@ -13,10 +13,22 @@ inputs:
     description: "Token used for the GitHub API (defaults to the workflow token)"
     default: ${{ github.token }}
 
+outputs:
+  version:
+    description: "The version actually installed, with no leading v. Worth
+      recording: with the default `latest` the workflow otherwise has no idea
+      which release it got, and that is discovered the day a build breaks."
+    value: ${{ steps.install.outputs.version }}
+  path:
+    description: "Directory containing the binary, already on PATH. For the
+      cases that need an explicit path rather than PATH resolution."
+    value: ${{ steps.install.outputs.path }}
+
 runs:
   using: "composite"
   steps:
     - name: Install aura
+      id: install
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
@@ -88,6 +100,10 @@ runs:
         fi
         chmod +x "${NAME}/${BIN}" 2>/dev/null || true
         echo "${DEST}/${NAME}" >> "$GITHUB_PATH"
+
+        # 6. Report what was actually installed.
+        echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        echo "path=${DEST}/${NAME}" >> "$GITHUB_OUTPUT"
 
     - name: Verify
       shell: bash
