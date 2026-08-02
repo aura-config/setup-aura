@@ -5,8 +5,8 @@ CLI and puts it on `PATH`.
 
 ```yaml
 - uses: aura-config/setup-aura@v1
-  with:
-    version: "0.1.0" # or "latest" (the default)
+  # `version` defaults to `latest`. Pin it — `version: "0.1.1"` — when a
+  # reproducible pipeline matters more than picking up fixes automatically.
 
 - run: aura check deploy.aura --strict
 ```
@@ -33,7 +33,7 @@ On x86_64 Linux this installs the **musl** build rather than the gnu one.
 
 A gnu binary is compiled against the builder's glibc and then refuses to start on
 anything older — the usual way a released Rust tool breaks for its first users.
-Measured against the 0.1.0 artifacts: the gnu build requires `GLIBC_2.34` and does
+Re-verified against the 0.1.1 artifacts: the gnu build requires `GLIBC_2.34` and does
 not reach `main` on Ubuntu 20.04, Debian 11, CentOS 8 or Amazon Linux 2. The musl
 build is `static-pie` and has no floor at all.
 
